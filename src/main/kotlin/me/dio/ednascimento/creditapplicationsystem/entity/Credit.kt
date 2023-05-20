@@ -10,7 +10,7 @@ import java.util.UUID
 data class Credit(
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        @Column(nullable = false)
+        @Column(name = "id_credit", nullable = false)
         val id: Long? = null,
 
         @Column(nullable = false, unique = true)
@@ -29,5 +29,6 @@ data class Credit(
         val status: Status = Status.IN_PROGRESS,
 
         @ManyToOne
+        @JoinColumn(name = "id_customer")
         val customer: Customer? = null
 )

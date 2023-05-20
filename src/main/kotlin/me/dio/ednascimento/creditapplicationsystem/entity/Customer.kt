@@ -6,7 +6,7 @@ import jakarta.persistence.*
 data class Customer(
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        @Column(nullable = false)
+        @Column(name = "id_customer", nullable = false)
         val id: Long? = null,
 
         @Column(nullable = false)
