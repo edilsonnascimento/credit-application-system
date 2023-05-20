@@ -1,4 +1,4 @@
-package me.dio.ednascimento.creditapplicationsystem
+package me.dio.ednascimento.creditapplicationsystem.config
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
