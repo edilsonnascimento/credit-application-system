@@ -21,4 +21,8 @@ class CustomerResource(
         val customer = customerService.findById(id)
         return CustomerView(customer)
     }
+
+    @DeleteMapping("/{id}")
+    fun deleteCustomer(@PathVariable id: Long) =
+        customerService.delete(id)
 }
