@@ -2,6 +2,7 @@ package me.dio.ednascimento.creditapplicationsystem.controller
 
 import me.dio.ednascimento.creditapplicationsystem.dto.*
 import me.dio.ednascimento.creditapplicationsystem.service.impl.CustomerService
+import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -11,15 +12,16 @@ class CustomerResource(
 ) {
 
     @PostMapping
-    fun saveCustomer(@RequestBody customerDto: CustomerDto): String {
+    fun saveCustomer(@RequestBody customerDto: CustomerDto): ResponseEntity<String> {
         val saveCustomer = customerService.save(customerDto.toEntity())
-        return "Custormer ${saveCustomer.email} saved!"
+        val message = "Custormer ${saveCustomer.email} saved!"
+        return ResponseEntity.status(HttpStatus.CREATED).body(message)
     }
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: Long): CustomerView {
+    fun findById(@PathVariable id: Long): ResponseEntity<CustomerView> {
         val customer = customerService.findById(id)
-        return CustomerView(customer)
+        return ResponseEntity.status(HttpStatus.OK).body(CustomerView(customer))
     }
 
     @DeleteMapping("/{id}")
@@ -27,11 +29,13 @@ class CustomerResource(
         customerService.delete(id)
 
     @PatchMapping
-    fun updateCustomer(@RequestParam(value = "customerId") id: Long,
-                       @RequestBody customerUpdateDto: CustomerUpdatedDto): CustomerView {
+    fun updateCustomer(
+        @RequestParam(value = "customerId") id: Long,
+        @RequestBody customerUpdateDto: CustomerUpdatedDto
+    ): ResponseEntity<CustomerView> {
         val customer = customerService.findById(id)
         val customerToUpdate = customerUpdateDto.toEntity(customer)
         val customerUpdated = customerService.save(customerToUpdate)
-        return CustomerView(customerUpdated)
+        return ResponseEntity.status(HttpStatus.OK).body(CustomerView(customerUpdated))
     }
 }
