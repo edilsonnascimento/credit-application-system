@@ -24,7 +24,7 @@ class CreditResource(
             .map { credit -> CreditViewList(credit) }
             .collect(Collectors.toList())
 
-    @GetMapping
+    @GetMapping("/{creditCode}")
     fun findByCreditCode(@RequestParam(value = "customerId") customerId: Long,
                          @PathVariable creditCode: UUID) : CreditView {
         val credit = creditService.findByCreditCode(customerId, creditCode)
