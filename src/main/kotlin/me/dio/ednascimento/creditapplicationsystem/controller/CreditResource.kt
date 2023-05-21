@@ -3,6 +3,7 @@ package me.dio.ednascimento.creditapplicationsystem.controller
 import me.dio.ednascimento.creditapplicationsystem.dto.*
 import me.dio.ednascimento.creditapplicationsystem.service.impl.CreditService
 import org.springframework.web.bind.annotation.*
+import java.util.*
 import java.util.stream.Collectors
 
 @RestController
@@ -18,8 +19,15 @@ class CreditResource(
     }
 
     @GetMapping
-    fun findAllByCustomerId(@RequestParam customerId: Long) = creditService
+    fun findAllByCustomerId(@RequestParam(value = "customerId") customerId: Long) = creditService
             .findAllByCustomers(customerId).stream()
             .map { credit -> CreditViewList(credit) }
             .collect(Collectors.toList())
+
+    @GetMapping
+    fun findByCreditCode(@RequestParam(value = "customerId") customerId: Long,
+                         @PathVariable creditCode: UUID) : CreditView {
+        val credit = creditService.findByCreditCode(customerId, creditCode)
+        return CreditView(credit)
+    }
 }
