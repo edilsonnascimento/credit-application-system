@@ -25,4 +25,13 @@ class CustomerResource(
     @DeleteMapping("/{id}")
     fun deleteCustomer(@PathVariable id: Long) =
         customerService.delete(id)
+
+    @PatchMapping
+    fun updateCustomer(@RequestParam(value = "customerId") id: Long,
+                       @RequestBody customerUpdateDto: CustomerUpdatedDto): CustomerView {
+        val customer = customerService.findById(id)
+        val customerToUpdate = customerUpdateDto.toEntity(customer)
+        val customerUpdated = customerService.save(customerToUpdate)
+        return CustomerView(customerUpdated)
+    }
 }
