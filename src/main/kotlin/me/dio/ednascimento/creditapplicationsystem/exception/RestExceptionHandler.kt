@@ -1,5 +1,6 @@
 package me.dio.ednascimento.creditapplicationsystem.exception
 
+import org.springframework.dao.DataAccessException
 import org.springframework.http.*
 import org.springframework.validation.*
 import org.springframework.web.bind.MethodArgumentNotValidException
@@ -7,7 +8,7 @@ import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
 
 @RestControllerAdvice
-class RestExceptionHandler {
+class  RestExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handlerValidException(ex: MethodArgumentNotValidException): ResponseEntity<ExceptionDetails> {
@@ -25,5 +26,17 @@ class RestExceptionHandler {
             exception = ex.javaClass.simpleName,
             detail = errors)
         return ResponseEntity(exceptionDetails, HttpStatus.BAD_REQUEST)
+    }
+
+    @ExceptionHandler(DataAccessException::class)
+    fun handlerValidException(ex: DataAccessException): ResponseEntity<ExceptionDetails> {
+        val exceptionDetails = ExceptionDetails(
+            title = "Bad Request! Consult the decumentation",
+            timestamp = LocalDate.now(),
+            status = HttpStatus.BAD_REQUEST.value(),
+            exception = ex.javaClass.simpleName,
+            detail = mutableMapOf(ex.cause.toString() to ex.message)
+        )
+        return ResponseEntity(exceptionDetails, HttpStatus.CONFLICT)
     }
 }
