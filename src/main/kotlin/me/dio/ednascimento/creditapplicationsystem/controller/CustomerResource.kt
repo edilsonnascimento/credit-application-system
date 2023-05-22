@@ -1,5 +1,6 @@
 package me.dio.ednascimento.creditapplicationsystem.controller
 
+import jakarta.validation.Valid
 import me.dio.ednascimento.creditapplicationsystem.dto.*
 import me.dio.ednascimento.creditapplicationsystem.service.impl.CustomerService
 import org.springframework.http.*
@@ -13,7 +14,7 @@ class CustomerResource(
 ) {
 
     @PostMapping
-    fun saveCustomer(@RequestBody customerDto: CustomerDto): ResponseEntity<String> {
+    fun saveCustomer(@RequestBody @Valid customerDto: CustomerDto): ResponseEntity<String> {
         val saveCustomer = customerService.save(customerDto.toEntity())
         val message = "Custormer ${saveCustomer.email} saved!"
         return ResponseEntity.status(CREATED).body(message)
@@ -26,13 +27,14 @@ class CustomerResource(
     }
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(NO_CONTENT)
     fun deleteCustomer(@PathVariable id: Long) =
         customerService.delete(id)
 
     @PatchMapping
     fun updateCustomer(
         @RequestParam(value = "customerId") id: Long,
-        @RequestBody customerUpdateDto: CustomerUpdatedDto
+        @RequestBody @Valid customerUpdateDto: CustomerUpdatedDto
     ): ResponseEntity<CustomerView> {
         val customer = customerService.findById(id)
         val customerToUpdate = customerUpdateDto.toEntity(customer)
