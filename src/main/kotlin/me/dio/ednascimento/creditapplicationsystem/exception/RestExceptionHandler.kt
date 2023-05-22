@@ -5,6 +5,7 @@ import org.springframework.http.*
 import org.springframework.validation.*
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.*
+import java.lang.IllegalArgumentException
 import java.time.LocalDate
 
 @RestControllerAdvice
@@ -38,5 +39,29 @@ class  RestExceptionHandler {
             detail = mutableMapOf(ex.cause.toString() to ex.message)
         )
         return ResponseEntity(exceptionDetails, HttpStatus.CONFLICT)
+    }
+
+    @ExceptionHandler(BusinessException::class)
+    fun handlerValidException(ex: BusinessException): ResponseEntity<ExceptionDetails> {
+        val exceptionDetails = ExceptionDetails(
+            title = "Bad Request! Consult the decumentation",
+            timestamp = LocalDate.now(),
+            status = HttpStatus.BAD_REQUEST.value(),
+            exception = ex.javaClass.simpleName,
+            detail = mutableMapOf(ex.cause.toString() to ex.message)
+        )
+        return ResponseEntity(exceptionDetails, HttpStatus.BAD_REQUEST)
+    }
+
+    @ExceptionHandler(IllegalArgumentException::class)
+    fun handlerValidException(ex: IllegalArgumentException): ResponseEntity<ExceptionDetails> {
+        val exceptionDetails = ExceptionDetails(
+            title = "Bad Request! Consult the decumentation",
+            timestamp = LocalDate.now(),
+            status = HttpStatus.BAD_REQUEST.value(),
+            exception = ex.javaClass.simpleName,
+            detail = mutableMapOf(ex.cause.toString() to ex.message)
+        )
+        return ResponseEntity(exceptionDetails, HttpStatus.BAD_REQUEST)
     }
 }

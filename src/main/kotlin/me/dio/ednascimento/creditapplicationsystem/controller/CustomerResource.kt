@@ -27,6 +27,7 @@ class CustomerResource(
     }
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(NO_CONTENT)
     fun deleteCustomer(@PathVariable id: Long) =
         customerService.delete(id)
 
