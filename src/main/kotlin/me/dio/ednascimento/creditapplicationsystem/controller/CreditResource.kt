@@ -1,5 +1,6 @@
 package me.dio.ednascimento.creditapplicationsystem.controller
 
+import jakarta.validation.Valid
 import me.dio.ednascimento.creditapplicationsystem.dto.*
 import me.dio.ednascimento.creditapplicationsystem.service.impl.CreditService
 import org.springframework.http.*
@@ -14,7 +15,7 @@ class CreditResource(
 ) {
 
     @PostMapping
-    fun salveCredit(@RequestBody creditDto: CreditDto): ResponseEntity<String> {
+    fun salveCredit(@RequestBody @Valid creditDto: CreditDto): ResponseEntity<String> {
         val credit = creditService.save(creditDto.toEntity())
         val message = "Credit ${credit.creditCode} - Customer ${credit.customer?.lastName} saved"
         return ResponseEntity.status(CREATED).body(message)
