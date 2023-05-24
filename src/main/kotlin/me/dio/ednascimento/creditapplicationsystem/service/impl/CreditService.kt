@@ -11,12 +11,12 @@ import java.util.*
 @Service
 class CreditService(
     private val creditRepository: CreditRepository,
-    private val custumerService: CustomerService
+    private val customerService: CustomerService
 ): ICreditService {
 
     override fun save(credit: Credit): Credit {
         credit.apply {
-            custumerService.findById(credit.customer?.id!!)
+            customerService.findById(credit.customer?.id!!)
         }
         return creditRepository.save(credit)
     }
