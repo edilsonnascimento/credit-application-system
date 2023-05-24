@@ -11,7 +11,9 @@ import me.dio.ednascimento.creditapplicationsystem.entity.Address
 import me.dio.ednascimento.creditapplicationsystem.entity.Customer
 import me.dio.ednascimento.creditapplicationsystem.exception.BusinessException
 import me.dio.ednascimento.creditapplicationsystem.repository.CustomerRepository
+import me.dio.ednascimento.creditapplicationsystem.repository.CustomerRepositoryTest
 import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -38,8 +40,8 @@ class CustomerServiceTest {
         val actual: Customer = service.save(fakeCustomer)
 
         //then
-        Assertions.assertThat(actual).isNotNull
-        Assertions.assertThat(actual).isSameAs(fakeCustomer)
+        assertThat(actual).isNotNull
+        assertThat(actual).isSameAs(fakeCustomer)
         verify(exactly = 1) { repository.save(fakeCustomer) }
     }
 
@@ -54,9 +56,9 @@ class CustomerServiceTest {
         val actual = service.findById(fakeId)
 
         // then
-        Assertions.assertThat(actual).isNotNull
-        Assertions.assertThat(actual).isExactlyInstanceOf(Customer::class.java)
-        Assertions.assertThat(actual).isSameAs(fakeCustomer)
+        assertThat(actual).isNotNull
+        assertThat(actual).isExactlyInstanceOf(Customer::class.java)
+        assertThat(actual).isSameAs(fakeCustomer)
         verify(exactly = 1) { repository.findById(fakeId) }
     }
 

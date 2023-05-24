@@ -3,8 +3,6 @@ package me.dio.ednascimento.creditapplicationsystem.repository
 import me.dio.ednascimento.creditapplicationsystem.entity.Address
 import me.dio.ednascimento.creditapplicationsystem.entity.Credit
 import me.dio.ednascimento.creditapplicationsystem.entity.Customer
-import me.dio.ednascimento.creditapplicationsystem.enumeration.Status
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -18,12 +16,13 @@ import java.time.LocalDate
 import java.time.Month
 import java.util.*
 
+
 @ActiveProfiles("test")
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class CreditRepositoryTest {
 
-    @Autowired lateinit var creditRepository: CreditRepository
+    @Autowired lateinit var repository: CreditRepository
     @Autowired lateinit var testEntityManager: TestEntityManager
 
     private lateinit var customer: Customer
@@ -46,14 +45,28 @@ class CreditRepositoryTest {
         credit2.creditCode = creditCode2
 
         // when
-        val creditFake1 = creditRepository.findByCreditCode(creditCode1)!!
-        val creditFake2 = creditRepository.findByCreditCode(creditCode2)!!
+        val creditFake1 = repository.findByCreditCode(creditCode1)!!
+        val creditFake2 = repository.findByCreditCode(creditCode2)!!
 
         // then
         assertThat(creditFake1).isNotNull
         assertThat(creditFake2).isNotNull
         assertThat(creditFake1).isSameAs(credit1)
         assertThat(creditFake2).isSameAs(credit2)
+    }
+
+    @Test
+    fun `SHOULD find all credits by customer id`() {
+        // given
+        var custmerId = 1L
+
+        // when
+        val credits = repository.findAllByCustomersId(custmerId)
+        // then
+        assertThat(credits).isNotEmpty
+        assertThat(credits.size).isEqualTo(2)
+        assertThat(credits).contains(credit1, credit2)
+
     }
     private fun buildCredit(
         creditValue: BigDecimal = BigDecimal.valueOf(500.0),
