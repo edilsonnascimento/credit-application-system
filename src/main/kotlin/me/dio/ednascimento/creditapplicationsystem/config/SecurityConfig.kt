@@ -23,7 +23,6 @@ class SecurityConfig {
             .password("123")
             .roles("MANAGES")
             .build()
-
         return InMemoryUserDetailsManager(user, admin)
     }
 }
