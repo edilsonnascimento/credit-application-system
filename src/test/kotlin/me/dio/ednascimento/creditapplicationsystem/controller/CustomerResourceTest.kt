@@ -1,15 +1,27 @@
 package me.dio.ednascimento.creditapplicationsystem.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import me.dio.ednascimento.creditapplicationsystem.dto.CustomerDto
+import me.dio.ednascimento.creditapplicationsystem.dto.CustomerUpdatedDto
 import me.dio.ednascimento.creditapplicationsystem.repository.CustomerRepository
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.MediaType
+import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers.*
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import java.math.BigDecimal
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -29,4 +41,62 @@ class CustomerResourceTest {
 
     @AfterEach
     fun tearEach() = customerRepository.deleteAll()
+
+    @Test
+    fun `SHOULD create a customer and return 201 status`() {
+        // given
+        val customerDto = builderCustomerDto()
+        val customerDtoJson = objectMapper.writeValueAsString(customerDto)
+
+        // when
+        mockMvc.perform(post(URL)
+            .contentType(APPLICATION_JSON)
+            .content(customerDtoJson))
+        //then
+            .andExpect(status().isCreated)
+            .andExpect(jsonPath("$.firstName").value("Cami"))
+            .andExpect(jsonPath("$.lastName").value("Cavalcante"))
+            .andExpect(jsonPath("$.cpf").value("28475934625"))
+            .andExpect(jsonPath("$.email").value("camila@email.com"))
+            .andExpect(jsonPath("$.income").value("1000.0"))
+            .andExpect(jsonPath("$.zipCode").value("000000"))
+            .andExpect(jsonPath("$.street").value("Rua da Cami, 123"))
+            .andExpect(jsonPath("$.id").value(1))
+            .andDo(print())
+    }
+
+    private fun builderCustomerDto(
+        firstName: String = "Cami",
+        lastName: String = "Cavalcante",
+        cpf: String = "28475934625",
+        email: String = "camila@email.com",
+        income: BigDecimal = BigDecimal.valueOf(1000.0),
+        password: String = "1234",
+        zipCode: String = "000000",
+        street: String = "Rua da Cami, 123",
+    ) = CustomerDto(
+        firstName = firstName,
+        lastName = lastName,
+        cpf = cpf,
+        email = email,
+        income = income,
+        password = password,
+        zipCode = zipCode,
+        street = street
+    )
+
+    private fun builderCustomerUpdateDto(
+        firstName: String = "CamiUpdate",
+        lastName: String = "CavalcanteUpdate",
+        income: BigDecimal = BigDecimal.valueOf(5000.0),
+        zipCode: String = "45656",
+        street: String = "Rua Updated"
+    ): CustomerUpdatedDto = CustomerUpdatedDto(
+        firstName = firstName,
+        lastName = lastName,
+        income = income,
+        zipCode = zipCode,
+        street = street
+    )
+
 }
