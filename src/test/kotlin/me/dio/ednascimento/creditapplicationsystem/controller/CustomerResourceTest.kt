@@ -52,6 +52,7 @@ class CustomerResourceTest {
         mockMvc.perform(post(URL)
             .contentType(APPLICATION_JSON)
             .content(customerDtoJson))
+
         //then
             .andExpect(status().isCreated)
             .andExpect(jsonPath("$.firstName").value("Cami"))
@@ -66,11 +67,12 @@ class CustomerResourceTest {
     }
 
     @Test
-    fun `should not save a customer with same CPF and return 409 status`() {
+    fun `SHOULD not save a customer with same CPF and return 409 status`() {
         //given
         customerRepository.save(builderCustomerDto().toEntity())
         val customerDto: CustomerDto = builderCustomerDto()
         val valueAsString: String = objectMapper.writeValueAsString(customerDto)
+
         //when
         mockMvc.perform(post(URL)
                 .contentType(APPLICATION_JSON)
@@ -86,15 +88,34 @@ class CustomerResourceTest {
             .andDo(print())
     }
 
+    @Test
+    fun `SHOULD not save a customer with empty firstName and return 400 status`() {
+        //given
+        val customerDto: CustomerDto = builderCustomerDto(firstName = "")
+        val valueAsString: String = objectMapper.writeValueAsString(customerDto)
+
+        //when
+        mockMvc.perform(post(URL)
+                .content(valueAsString)
+                .contentType(APPLICATION_JSON))
+        //then
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.title").value("Bad Request! Consult the documentation"))
+            .andExpect(jsonPath("$.timestamp").exists())
+            .andExpect(jsonPath("$.status").value(400))
+            .andExpect(jsonPath("$.exception").value("MethodArgumentNotValidException"))
+            .andExpect(jsonPath("$.details[*]").isNotEmpty)
+            .andDo(print())
+    }
     private fun builderCustomerDto(
-        firstName: String = "Cami",
-        lastName: String = "Cavalcante",
+        firstName: String = "Edilson",
+        lastName: String = "Nascimento",
         cpf: String = "28475934625",
-        email: String = "camila@email.com",
+        email: String = "edilson@email.com",
         income: BigDecimal = BigDecimal.valueOf(1000.0),
         password: String = "1234",
         zipCode: String = "000000",
-        street: String = "Rua da Cami, 123",
+        street: String = "Rua da Camiha, 123",
     ) = CustomerDto(
         firstName = firstName,
         lastName = lastName,
@@ -107,8 +128,8 @@ class CustomerResourceTest {
     )
 
     private fun builderCustomerUpdateDto(
-        firstName: String = "CamiUpdate",
-        lastName: String = "CavalcanteUpdate",
+        firstName: String = "EdilsonUpdate",
+        lastName: String = "NascimentoUpdate",
         income: BigDecimal = BigDecimal.valueOf(5000.0),
         zipCode: String = "45656",
         street: String = "Rua Updated"
@@ -119,5 +140,4 @@ class CustomerResourceTest {
         zipCode = zipCode,
         street = street
     )
-
 }

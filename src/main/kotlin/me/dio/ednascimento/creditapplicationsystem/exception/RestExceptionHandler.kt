@@ -21,7 +21,7 @@ class  RestExceptionHandler {
                 errors[fieldName] = messageError
         }
         val exceptionDetails = ExceptionDetails(
-            title = "Bad Request! Consult the decumentation",
+            title = "Bad Request! Consult the documentation",
             timestamp = LocalDate.now(),
             status = HttpStatus.BAD_REQUEST.value(),
             exception = ex.javaClass.simpleName,
@@ -44,7 +44,7 @@ class  RestExceptionHandler {
     @ExceptionHandler(BusinessException::class)
     fun handlerValidException(ex: BusinessException): ResponseEntity<ExceptionDetails> {
         val exceptionDetails = ExceptionDetails(
-            title = "Bad Request! Consult the decumentation",
+            title = "Bad Request! Consult the documentation",
             timestamp = LocalDate.now(),
             status = HttpStatus.BAD_REQUEST.value(),
             exception = ex.javaClass.simpleName,
@@ -56,7 +56,7 @@ class  RestExceptionHandler {
     @ExceptionHandler(IllegalArgumentException::class)
     fun handlerValidException(ex: IllegalArgumentException): ResponseEntity<ExceptionDetails> {
         val exceptionDetails = ExceptionDetails(
-            title = "Bad Request! Consult the decumentation",
+            title = "Bad Request! Consult the documentation",
             timestamp = LocalDate.now(),
             status = HttpStatus.BAD_REQUEST.value(),
             exception = ex.javaClass.simpleName,
