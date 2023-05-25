@@ -25,18 +25,18 @@ class  RestExceptionHandler {
             timestamp = LocalDate.now(),
             status = HttpStatus.BAD_REQUEST.value(),
             exception = ex.javaClass.simpleName,
-            detail = errors)
+            details = errors)
         return ResponseEntity(exceptionDetails, HttpStatus.BAD_REQUEST)
     }
 
     @ExceptionHandler(DataAccessException::class)
     fun handlerValidException(ex: DataAccessException): ResponseEntity<ExceptionDetails> {
         val exceptionDetails = ExceptionDetails(
-            title = "Bad Request! Consult the decumentation",
+            title = "Conflict! Consult the documentation",
             timestamp = LocalDate.now(),
-            status = HttpStatus.BAD_REQUEST.value(),
+            status = HttpStatus.CONFLICT.value(),
             exception = ex.javaClass.simpleName,
-            detail = mutableMapOf(ex.cause.toString() to ex.message)
+            details = mutableMapOf(ex.cause.toString() to ex.message)
         )
         return ResponseEntity(exceptionDetails, HttpStatus.CONFLICT)
     }
@@ -48,7 +48,7 @@ class  RestExceptionHandler {
             timestamp = LocalDate.now(),
             status = HttpStatus.BAD_REQUEST.value(),
             exception = ex.javaClass.simpleName,
-            detail = mutableMapOf(ex.cause.toString() to ex.message)
+            details = mutableMapOf(ex.cause.toString() to ex.message)
         )
         return ResponseEntity(exceptionDetails, HttpStatus.BAD_REQUEST)
     }
@@ -60,7 +60,7 @@ class  RestExceptionHandler {
             timestamp = LocalDate.now(),
             status = HttpStatus.BAD_REQUEST.value(),
             exception = ex.javaClass.simpleName,
-            detail = mutableMapOf(ex.cause.toString() to ex.message)
+            details = mutableMapOf(ex.cause.toString() to ex.message)
         )
         return ResponseEntity(exceptionDetails, HttpStatus.BAD_REQUEST)
     }

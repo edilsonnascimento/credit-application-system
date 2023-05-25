@@ -65,6 +65,27 @@ class CustomerResourceTest {
             .andDo(print())
     }
 
+    @Test
+    fun `should not save a customer with same CPF and return 409 status`() {
+        //given
+        customerRepository.save(builderCustomerDto().toEntity())
+        val customerDto: CustomerDto = builderCustomerDto()
+        val valueAsString: String = objectMapper.writeValueAsString(customerDto)
+        //when
+        mockMvc.perform(post(URL)
+                .contentType(APPLICATION_JSON)
+                .content(valueAsString)
+        )
+        //then
+            .andExpect(status().isConflict)
+            .andExpect(jsonPath("$.title").value("Conflict! Consult the documentation"))
+            .andExpect(jsonPath("$.timestamp").exists())
+            .andExpect(jsonPath("$.status").value(409))
+            .andExpect(jsonPath("$.exception").value("DataIntegrityViolationException"))
+            .andExpect(jsonPath("$.details[*]").isNotEmpty)
+            .andDo(print())
+    }
+
     private fun builderCustomerDto(
         firstName: String = "Cami",
         lastName: String = "Cavalcante",
