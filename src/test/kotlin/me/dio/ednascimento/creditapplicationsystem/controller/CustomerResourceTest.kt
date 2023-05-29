@@ -130,6 +130,24 @@ class CustomerResourceTest {
             .andDo(print())
     }
 
+    @Test
+    fun `should not find customer with invalid id and return 400 status`() {
+        //given
+        val invalidId: Long = 2L
+        //when
+        mockMvc.perform(get("$URL/$invalidId")
+                .accept(APPLICATION_JSON)
+        )
+        //then
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.title").value("Bad Request! Consult the documentation"))
+            .andExpect(jsonPath("$.timestamp").exists())
+            .andExpect(jsonPath("$.status").value(400))
+            .andExpect(jsonPath("$.exception").value("BusinessException"))
+            .andExpect(jsonPath("$.details[*]").isNotEmpty)
+            .andDo(print())
+    }
+
     private fun builderCustomerDto(
         firstName: String = "Cami",
         lastName: String = "Cavalcante",
