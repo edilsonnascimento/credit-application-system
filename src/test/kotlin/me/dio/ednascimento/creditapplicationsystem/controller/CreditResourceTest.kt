@@ -15,9 +15,13 @@ import org.springframework.http.MediaType.*
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import org.hamcrest.Matchers.hasSize
+import org.hamcrest.Matchers.`is`
 import java.math.BigDecimal
 import java.time.LocalDate
 
@@ -67,6 +71,7 @@ class CreditResourceTest {
     @Test
     fun `SHOULD not save a credit with customer not found and return 400 status`() {
         // given
+        custormerRepository.save(builderCustomerDto().toEntity())
         val creditDto = builderCreditDto()
         val creditDtoJson = objectMapper.writeValueAsString(creditDto)
 
@@ -87,7 +92,26 @@ class CreditResourceTest {
         // then
     }
 
-    private fun builderCustomerDto(
+    @Test
+    fun `SHOULD return list credits by id customer and 200 status`() {
+        //given
+        val customerId = 1L
+        custormerRepository.save(builderCustomerDto().toEntity())
+        repository.save(builderCreditDto().toEntity())
+        repository.save(builderCreditDto().toEntity())
+
+        //when
+        mockMvc.perform(get("${URL}?customerId=$customerId")
+            .contentType(APPLICATION_JSON)
+        )
+            //then
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.length()", `is`(2)))
+            .andDo(MockMvcResultHandlers.print())
+
+    }
+
+        private fun builderCustomerDto(
         firstName: String = "Cami",
         lastName: String = "Cavalcante",
         cpf: String = "28475934625",
