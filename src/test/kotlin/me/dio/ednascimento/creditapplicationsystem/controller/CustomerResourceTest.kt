@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.*
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import java.math.BigDecimal
 import java.util.*
@@ -192,6 +193,28 @@ class CustomerResourceTest {
             .andDo(print())
     }
 
+    @Test
+    fun `SHOULD not update a customer with invalid id and return 400 status`() {
+        //given
+        val invalidId: Long = Random().nextLong()
+        val customerUpdateDto = builderCustomerUpdateDto()
+        val valueAsString: String = objectMapper.writeValueAsString(customerUpdateDto)
+
+        //when
+        mockMvc.perform(patch("$URL?customerId=$invalidId")
+                .contentType(APPLICATION_JSON)
+                .content(valueAsString)
+        )
+
+        //then
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.title").value("Bad Request! Consult the documentation"))
+            .andExpect(jsonPath("$.timestamp").exists())
+            .andExpect(jsonPath("$.status").value(400))
+            .andExpect(jsonPath("$.exception").value("BusinessException"))
+            .andExpect(jsonPath("$.details[*]").isNotEmpty)
+            .andDo(print())
+    }
 
     private fun builderCustomerDto(
         firstName: String = "Cami",
