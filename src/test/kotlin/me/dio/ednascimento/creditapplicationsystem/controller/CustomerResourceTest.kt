@@ -3,6 +3,7 @@ package me.dio.ednascimento.creditapplicationsystem.controller
 import com.fasterxml.jackson.databind.ObjectMapper
 import me.dio.ednascimento.creditapplicationsystem.dto.CustomerDto
 import me.dio.ednascimento.creditapplicationsystem.dto.CustomerUpdatedDto
+import me.dio.ednascimento.creditapplicationsystem.entity.Customer
 import me.dio.ednascimento.creditapplicationsystem.repository.CustomerRepository
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -14,6 +15,7 @@ import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
@@ -162,6 +164,31 @@ class CustomerResourceTest {
             .andExpect(jsonPath("$.status").value(400))
             .andExpect(jsonPath("$.exception").value("BusinessException"))
             .andExpect(jsonPath("$.details[*]").isNotEmpty)
+            .andDo(print())
+    }
+
+    @Test
+    fun `SHOULD update a customer and return 200 status`() {
+        //given
+        val customer = repository.save(builderCustomerDto().toEntity())
+        val customerUpdateDto = builderCustomerUpdateDto()
+        val valueAsString: String = objectMapper.writeValueAsString(customerUpdateDto)
+
+        //when
+        mockMvc.perform(patch("$URL?customerId=${customer.id}")
+                .contentType(APPLICATION_JSON)
+                .content(valueAsString)
+        )
+        //then
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.firstName").value("CamiUpdate"))
+            .andExpect(jsonPath("$.lastName").value("CavalcanteUpdate"))
+            .andExpect(jsonPath("$.cpf").value("28475934625"))
+            .andExpect(jsonPath("$.email").value("camila@email.com"))
+            .andExpect(jsonPath("$.income").value("5000.0"))
+            .andExpect(jsonPath("$.zipCode").value("45656"))
+            .andExpect(jsonPath("$.street").value("Rua Updated"))
+            //.andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1))
             .andDo(print())
     }
 
