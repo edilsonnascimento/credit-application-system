@@ -71,8 +71,7 @@ class CreditResourceTest {
     @Test
     fun `SHOULD not save a credit with customer not found and return 400 status`() {
         // given
-        custormerRepository.save(builderCustomerDto().toEntity())
-        val creditDto = builderCreditDto()
+        val creditDto = builderCreditDto(customerId = Long.MAX_VALUE)
         val creditDtoJson = objectMapper.writeValueAsString(creditDto)
 
         // when
@@ -96,7 +95,7 @@ class CreditResourceTest {
     fun `SHOULD return list credits by id customer and 200 status`() {
         //given
         val customerId = 1L
-        custormerRepository.save(builderCustomerDto().toEntity())
+        custormerRepository.save(builderCustomerDto(cpf = "65087979050", email = "65087979050@email.com").toEntity())
         repository.save(builderCreditDto().toEntity())
         repository.save(builderCreditDto().toEntity())
 
