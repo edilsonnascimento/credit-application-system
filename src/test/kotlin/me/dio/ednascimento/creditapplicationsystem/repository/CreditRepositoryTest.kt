@@ -62,6 +62,7 @@ class CreditRepositoryTest {
 
         // when
         val credits = repository.findAllByCustomersId(custmerId)
+
         // then
         assertThat(credits).isNotEmpty
         assertThat(credits.size).isEqualTo(2)

@@ -1,6 +1,7 @@
 package me.dio.ednascimento.creditapplicationsystem.exception
 
 import org.springframework.dao.DataAccessException
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.*
 import org.springframework.validation.*
 import org.springframework.web.bind.MethodArgumentNotValidException
@@ -63,5 +64,16 @@ class  RestExceptionHandler {
             details = mutableMapOf(ex.cause.toString() to ex.message)
         )
         return ResponseEntity(exceptionDetails, HttpStatus.BAD_REQUEST)
+    }
+    @ExceptionHandler(DataIntegrityViolationException::class)
+    fun handlerValidDuplicatedException(ex: DataAccessException): ResponseEntity<ExceptionDetails> {
+        val exceptionDetails = ExceptionDetails(
+            title = "Conflict! Consult the documentation",
+            timestamp = LocalDate.now(),
+            status = HttpStatus.CONFLICT.value(),
+            exception = ex.javaClass.simpleName,
+            details = mutableMapOf(ex.cause.toString() to ex.message)
+        )
+        return ResponseEntity(exceptionDetails, HttpStatus.CONFLICT)
     }
 }
