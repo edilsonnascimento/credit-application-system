@@ -44,7 +44,7 @@ class CreditResourceTest {
     @Test
     fun `SHOULD create a credit and return 201 status`() {
         // given
-        val customer = custormerRepository.save(builderCustomerDto().toEntity())
+        custormerRepository.save(builderCustomerDto().toEntity())
         val creditDto = builderCreditDto()
         val creditDtoJson = objectMapper.writeValueAsString(creditDto)
 
@@ -62,6 +62,29 @@ class CreditResourceTest {
             .andExpect(jsonPath("$.emailCustomer").value(""))
             .andExpect(jsonPath("$.incomeCustomer").value("0"))
             .andDo(MockMvcResultHandlers.print())
+    }
+
+    @Test
+    fun `SHOULD not save a credit with customer not found and return 400 status`() {
+        // given
+        val creditDto = builderCreditDto()
+        val creditDtoJson = objectMapper.writeValueAsString(creditDto)
+
+        // when
+        mockMvc.perform(post(URL)
+            .contentType(APPLICATION_JSON)
+            .content(creditDtoJson))
+
+            //then
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.title").value("Bad Request! Consult the documentation"))
+            .andExpect(jsonPath("$.timestamp").exists())
+            .andExpect(jsonPath("$.status").value(400))
+            .andExpect(jsonPath("$.exception").value("BusinessException"))
+            .andExpect(jsonPath("$.details[*]").isNotEmpty)
+            .andDo(MockMvcResultHandlers.print())
+        // when
+        // then
     }
 
     private fun builderCustomerDto(
