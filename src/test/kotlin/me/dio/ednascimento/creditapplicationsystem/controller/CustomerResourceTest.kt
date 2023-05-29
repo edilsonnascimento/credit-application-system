@@ -10,18 +10,15 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.http.MediaType
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.*
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import java.math.BigDecimal
+import java.util.*
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -109,7 +106,7 @@ class CustomerResourceTest {
     }
 
     @Test
-    fun `should find customer by id and return 200 status`() {
+    fun `SHOULD find customer by id and return 200 status`() {
         //given
         val customer = repository.save(builderCustomerDto().toEntity())
 
@@ -131,13 +128,14 @@ class CustomerResourceTest {
     }
 
     @Test
-    fun `should not find customer with invalid id and return 400 status`() {
+    fun `SHOULD not find customer with invalid id and return 400 status`() {
         //given
         val invalidId: Long = 2L
+
         //when
         mockMvc.perform(get("$URL/$invalidId")
-                .accept(APPLICATION_JSON)
-        )
+                .accept(APPLICATION_JSON))
+
         //then
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.title").value("Bad Request! Consult the documentation"))
@@ -147,6 +145,26 @@ class CustomerResourceTest {
             .andExpect(jsonPath("$.details[*]").isNotEmpty)
             .andDo(print())
     }
+
+    @Test
+    fun `SHOULD not delete customer by id and return 400 status`() {
+        //given
+        val invalidId: Long = Random().nextLong()
+
+        //when
+        mockMvc.perform(delete("$URL/${invalidId}")
+               .accept(APPLICATION_JSON))
+
+        //then
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.title").value("Bad Request! Consult the documentation"))
+            .andExpect(jsonPath("$.timestamp").exists())
+            .andExpect(jsonPath("$.status").value(400))
+            .andExpect(jsonPath("$.exception").value("BusinessException"))
+            .andExpect(jsonPath("$.details[*]").isNotEmpty)
+            .andDo(print())
+    }
+
 
     private fun builderCustomerDto(
         firstName: String = "Cami",
