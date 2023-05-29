@@ -1,6 +1,7 @@
 package me.dio.ednascimento.creditapplicationsystem.exception
 
 import org.springframework.dao.DataAccessException
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.*
 import org.springframework.validation.*
 import org.springframework.web.bind.MethodArgumentNotValidException
@@ -21,22 +22,22 @@ class  RestExceptionHandler {
                 errors[fieldName] = messageError
         }
         val exceptionDetails = ExceptionDetails(
-            title = "Bad Request! Consult the decumentation",
+            title = "Bad Request! Consult the documentation",
             timestamp = LocalDate.now(),
             status = HttpStatus.BAD_REQUEST.value(),
             exception = ex.javaClass.simpleName,
-            detail = errors)
+            details = errors)
         return ResponseEntity(exceptionDetails, HttpStatus.BAD_REQUEST)
     }
 
     @ExceptionHandler(DataAccessException::class)
     fun handlerValidException(ex: DataAccessException): ResponseEntity<ExceptionDetails> {
         val exceptionDetails = ExceptionDetails(
-            title = "Bad Request! Consult the decumentation",
+            title = "Conflict! Consult the documentation",
             timestamp = LocalDate.now(),
-            status = HttpStatus.BAD_REQUEST.value(),
+            status = HttpStatus.CONFLICT.value(),
             exception = ex.javaClass.simpleName,
-            detail = mutableMapOf(ex.cause.toString() to ex.message)
+            details = mutableMapOf(ex.cause.toString() to ex.message)
         )
         return ResponseEntity(exceptionDetails, HttpStatus.CONFLICT)
     }
@@ -44,11 +45,11 @@ class  RestExceptionHandler {
     @ExceptionHandler(BusinessException::class)
     fun handlerValidException(ex: BusinessException): ResponseEntity<ExceptionDetails> {
         val exceptionDetails = ExceptionDetails(
-            title = "Bad Request! Consult the decumentation",
+            title = "Bad Request! Consult the documentation",
             timestamp = LocalDate.now(),
             status = HttpStatus.BAD_REQUEST.value(),
             exception = ex.javaClass.simpleName,
-            detail = mutableMapOf(ex.cause.toString() to ex.message)
+            details = mutableMapOf(ex.cause.toString() to ex.message)
         )
         return ResponseEntity(exceptionDetails, HttpStatus.BAD_REQUEST)
     }
@@ -56,12 +57,23 @@ class  RestExceptionHandler {
     @ExceptionHandler(IllegalArgumentException::class)
     fun handlerValidException(ex: IllegalArgumentException): ResponseEntity<ExceptionDetails> {
         val exceptionDetails = ExceptionDetails(
-            title = "Bad Request! Consult the decumentation",
+            title = "Bad Request! Consult the documentation",
             timestamp = LocalDate.now(),
             status = HttpStatus.BAD_REQUEST.value(),
             exception = ex.javaClass.simpleName,
-            detail = mutableMapOf(ex.cause.toString() to ex.message)
+            details = mutableMapOf(ex.cause.toString() to ex.message)
         )
         return ResponseEntity(exceptionDetails, HttpStatus.BAD_REQUEST)
+    }
+    @ExceptionHandler(DataIntegrityViolationException::class)
+    fun handlerValidDuplicatedException(ex: DataAccessException): ResponseEntity<ExceptionDetails> {
+        val exceptionDetails = ExceptionDetails(
+            title = "Conflict! Consult the documentation",
+            timestamp = LocalDate.now(),
+            status = HttpStatus.CONFLICT.value(),
+            exception = ex.javaClass.simpleName,
+            details = mutableMapOf(ex.cause.toString() to ex.message)
+        )
+        return ResponseEntity(exceptionDetails, HttpStatus.CONFLICT)
     }
 }

@@ -15,10 +15,9 @@ class CreditResource(
 ) {
 
     @PostMapping
-    fun salveCredit(@RequestBody @Valid creditDto: CreditDto): ResponseEntity<String> {
-        val credit = creditService.save(creditDto.toEntity())
-        val message = "Credit ${credit.creditCode} - Customer ${credit.customer?.lastName} saved"
-        return ResponseEntity.status(CREATED).body(message)
+    fun salveCredit(@RequestBody @Valid creditDto: CreditDto): ResponseEntity<CreditView> {
+        val creditSave = creditService.save(creditDto.toEntity())
+        return ResponseEntity.status(CREATED).body(CreditView(creditSave))
     }
 
     @GetMapping
