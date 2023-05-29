@@ -28,7 +28,7 @@ import java.math.BigDecimal
 @AutoConfigureMockMvc
 @ContextConfiguration
 class CustomerResourceTest {
-    @Autowired private lateinit var customerRepository: CustomerRepository
+    @Autowired private lateinit var repository: CustomerRepository
     @Autowired private lateinit var mockMvc: MockMvc
     @Autowired private lateinit var objectMapper: ObjectMapper
 
@@ -37,10 +37,10 @@ class CustomerResourceTest {
     }
 
     @BeforeEach
-    fun setup() = customerRepository.deleteAll()
+    fun setup() = repository.deleteAll()
 
     @AfterEach
-    fun tearEach() = customerRepository.deleteAll()
+    fun tearEach() = repository.deleteAll()
 
     @Test
     fun `SHOULD create a customer and return 201 status`() {
@@ -69,7 +69,7 @@ class CustomerResourceTest {
     @Test
     fun `SHOULD not save a customer with same CPF and return 409 status`() {
         //given
-        customerRepository.save(builderCustomerDto().toEntity())
+        repository.save(builderCustomerDto().toEntity())
         val customerDto: CustomerDto = builderCustomerDto()
         val valueAsString: String = objectMapper.writeValueAsString(customerDto)
 
@@ -107,15 +107,38 @@ class CustomerResourceTest {
             .andExpect(jsonPath("$.details[*]").isNotEmpty)
             .andDo(print())
     }
+
+    @Test
+    fun `should find customer by id and return 200 status`() {
+        //given
+        val customer = repository.save(builderCustomerDto().toEntity())
+
+        //when
+        mockMvc.perform(get("$URL/${customer.id}")
+                .accept(APPLICATION_JSON)
+        )
+        //then
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.firstName").value("Cami"))
+            .andExpect(jsonPath("$.lastName").value("Cavalcante"))
+            .andExpect(jsonPath("$.cpf").value("28475934625"))
+            .andExpect(jsonPath("$.email").value("camila@email.com"))
+            .andExpect(jsonPath("$.income").value("1000.0"))
+            .andExpect(jsonPath("$.zipCode").value("000000"))
+            .andExpect(jsonPath("$.street").value("Rua da Cami, 123"))
+            //.andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1))
+            .andDo(print())
+    }
+
     private fun builderCustomerDto(
-        firstName: String = "Edilson",
-        lastName: String = "Nascimento",
+        firstName: String = "Cami",
+        lastName: String = "Cavalcante",
         cpf: String = "28475934625",
-        email: String = "edilson@email.com",
+        email: String = "camila@email.com",
         income: BigDecimal = BigDecimal.valueOf(1000.0),
         password: String = "1234",
         zipCode: String = "000000",
-        street: String = "Rua da Camiha, 123",
+        street: String = "Rua da Cami, 123",
     ) = CustomerDto(
         firstName = firstName,
         lastName = lastName,
@@ -128,8 +151,8 @@ class CustomerResourceTest {
     )
 
     private fun builderCustomerUpdateDto(
-        firstName: String = "EdilsonUpdate",
-        lastName: String = "NascimentoUpdate",
+        firstName: String = "CamiUpdate",
+        lastName: String = "CavalcanteUpdate",
         income: BigDecimal = BigDecimal.valueOf(5000.0),
         zipCode: String = "45656",
         street: String = "Rua Updated"
